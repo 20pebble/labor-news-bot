@@ -7,7 +7,7 @@ import os
 
 NAVER_EMAIL = "20pebble@naver.com"
 NAVER_PASSWORD = os.getenv("NAVER_APP_PASSWORD")
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+
 
 KEYWORDS = [
     "보건의료노조",
@@ -24,41 +24,19 @@ def get_news():
     res = requests.get(url)
     return res.text[:6000]
 
-def summarize(news):
-    import requests
-    import os
+def summarize(news_list):
+    if not news_list:
+        return "오늘 주요 노동계 뉴스가 없습니다."
 
-    api_key = os.environ["OPENAI_API_KEY"]
+    summary = "[오늘의 노동계 주요 동향 요약]\n\n"
 
-    prompt = f"""
-    아래 최근 노동계 동향 뉴스를
-    노사관계, 정책, 파업, 노조 중심으로
-    핵심만 간결하게 5줄 요약해줘.
-    
-    뉴스:
-    {news}
-    """
+    for i, news in enumerate(news_list[:5], 1):
+        title = news.get("title", "").replace("<b>", "").replace("</b>", "")
+        link = news.get("link", "")
+        summary += f"{i}. {title}\n- 기사링크: {link}\n\n"
 
-    r = requests.post(
-        "https://api.openai.com/v1/responses",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "model": "gpt-4.1-mini",
-            "input": prompt
-        },
-        timeout=60
-    )
-
-    data = r.json()
-    print(data)  # 디버깅용 로그
-
-    try:
-        return data["output"][0]["content"][0]["text"]
-    except Exception:
-        return f"요약 실패 / API 응답:\n{data}"
+    summary += "※ 자동 수집된 최신 노동계 뉴스 요약입니다."
+    return summary
 
 def send_email(content):
     today = datetime.datetime.now().strftime("%Y.%m.%d")
