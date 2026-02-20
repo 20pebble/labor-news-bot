@@ -57,7 +57,9 @@ def summarize(news):
     data = {
         "model": "claude-3-5-sonnet-20240620",
         "max_tokens": 1000,
-        "messages": [{"role": "user", "content": prompt}]
+        "messages": [
+            {"role": "user", "content": prompt}
+        ]
     }
 
     r = requests.post(
@@ -66,7 +68,13 @@ def summarize(news):
         json=data
     )
 
-    return r.json()["content"][0]["text"]
+    result = r.json()
+
+    # 🔥 에러 방지 안전 처리
+    if "content" not in result:
+        return f"요약 생성 실패 (API 응답): {result}"
+
+    return result["content"][0]["text"]
 
 def send_email(content):
     today = datetime.datetime.now().strftime("%Y.%m.%d")
