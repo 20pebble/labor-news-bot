@@ -31,8 +31,9 @@ def summarize(news):
     api_key = os.environ["OPENAI_API_KEY"]
 
     prompt = f"""
-    아래 최근 노동계 뉴스를 정책/노사관계 중심으로 핵심만 5줄 요약해줘.
-    월요일이면 주말 포함 동향 강조.
+    아래 최근 노동계 동향 뉴스를
+    노사관계, 정책, 파업, 노조 중심으로
+    핵심만 간결하게 5줄 요약해줘.
     
     뉴스:
     {news}
@@ -52,14 +53,12 @@ def summarize(news):
     )
 
     data = r.json()
-
-    # 디버깅용 (에러 원인 확인)
-    print(data)
+    print(data)  # 디버깅용 로그
 
     try:
         return data["output"][0]["content"][0]["text"]
     except Exception:
-        return f"요약 실패 - API 응답:\n{data}"
+        return f"요약 실패 / API 응답:\n{data}"
 
 def send_email(content):
     today = datetime.datetime.now().strftime("%Y.%m.%d")
