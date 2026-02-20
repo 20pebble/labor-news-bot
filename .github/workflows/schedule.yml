@@ -1,0 +1,28 @@
+name: Daily Labor News Bot
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 한국시간 오전 7시 자동 실행
+  workflow_dispatch:
+
+jobs:
+  run-news-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 불러오기
+        uses: actions/checkout@v4
+
+      - name: 파이썬 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 라이브러리 설치
+        run: pip install requests
+
+      - name: 뉴스 봇 실행
+        run: python labor_news_bot.py
+        env:
+          NAVER_APP_PASSWORD: ${{ secrets.NAVER_APP_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
