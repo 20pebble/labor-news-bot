@@ -24,20 +24,30 @@ def get_news():
     res = requests.get(url)
     return res.text[:6000]
 
-def summarize(news_list):
-    if not news_list:
+def summarize(news):
+    # news가 문자열인 경우 (현재 에러 상황 대응)
+    if isinstance(news, str):
+        return f"""[오늘의 노동계 주요 동향]
+
+{news}
+
+※ 자동 수집된 최신 노동계 뉴스 요약입니다.
+"""
+
+    # news가 리스트(정상 구조)인 경우
+    if not news:
         return "오늘 주요 노동계 뉴스가 없습니다."
 
-    summary = "[오늘의 노동계 주요 동향 요약]\n\n"
+    summary = "[오늘의 노동계 주요 동향]\n\n"
 
-    for i, news in enumerate(news_list[:5], 1):
-        title = news.get("title", "").replace("<b>", "").replace("</b>", "")
-        link = news.get("link", "")
+    for i, item in enumerate(news[:5], 1):
+        title = item.get("title", "").replace("<b>", "").replace("</b>", "")
+        link = item.get("link", "")
         summary += f"{i}. {title}\n- 기사링크: {link}\n\n"
 
     summary += "※ 자동 수집된 최신 노동계 뉴스 요약입니다."
     return summary
-
+    
 def send_email(content):
     today = datetime.datetime.now().strftime("%Y.%m.%d")
     subject = f"[일일 노동계 동향 브리핑] {today} (보건의료·단체교섭)"
