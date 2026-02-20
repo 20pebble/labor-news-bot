@@ -22,7 +22,7 @@ jobs:
         run: pip install requests
 
       - name: 뉴스 봇 실행
-  run: python labor_news_bot.py
-  env:
-    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-    NAVER_APP_PASSWORD: ${{ secrets.NAVER_APP_PASSWORD }}
+        run: python labor_news_bot.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NAVER_APP_PASSWORD: ${{ secrets.NAVER_APP_PASSWORD }}
